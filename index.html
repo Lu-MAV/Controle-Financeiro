@@ -601,6 +601,7 @@
       z-index: 50;
       padding-bottom: env(safe-area-inset-bottom);
       box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+      pointer-events: auto;
     }
     .bottom-nav-inner {
       display: flex;
@@ -620,6 +621,8 @@
       flex: 1;
       border: none;
       background: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .bn-item .bn-icon { font-size: 22px; }
     .bn-item .bn-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--gray-400); }
@@ -643,10 +646,11 @@
       cursor: pointer;
       z-index: 60;
       box-shadow: 0 6px 24px rgba(79,70,229,.45);
-      display: none;
       align-items: center;
       justify-content: center;
       transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .fab:active { transform: translateX(-50%) scale(0.93); box-shadow: 0 2px 10px rgba(79,70,229,.35); }
 
@@ -823,6 +827,8 @@
       overflow: hidden;
       border: 1.5px solid var(--gray-200);
       box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      position: relative;
+      z-index: 1;
     }
     @media (max-width: 900px) { .fin-panel { grid-template-columns: 1fr; } }
     .fin-col {
@@ -832,6 +838,8 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      position: relative;
+      z-index: 1;
     }
     .fin-col:last-child { border-right: none; }
     .fin-col.col-balance { background: linear-gradient(135deg,#eff6ff,#dbeafe); }
@@ -4215,12 +4223,12 @@ function updateBottomNav() {
   });
 }
 
-// Sobrescreve nav() para atualizar bottom nav também
-const _navOriginal = nav;
-function nav(view) {
+// Atualiza bottom nav quando nav() é chamado
+const _navOriginal = window.nav;
+window.nav = function(view) {
   _navOriginal(view);
   updateBottomNav();
-}
+};
 
 // ══════════════════════════════════════════════
 //  QUICK-ADD SHEET
@@ -4454,11 +4462,11 @@ function renderNotifBanner() {
 })();
 
 // Patch no renderDash para incluir banner de notificação
-const _origRenderDash = renderDash;
-function renderDash() {
+const _origRenderDash = window.renderDash;
+window.renderDash = function() {
   _origRenderDash();
   setTimeout(renderNotifBanner, 0);
-}
+};
 </script>
 </body>
 </html>
